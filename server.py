@@ -98,7 +98,7 @@ class DynamicResolver(client.Resolver):
             return result
 
     def lookupAddress(self, name, timeout=None):
-        name = name.decode()
+        name = name.decode().lower()
 
         log.debug('address {}'.format(name))
 
