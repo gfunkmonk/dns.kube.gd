@@ -1,7 +1,6 @@
-FROM python:2.7-onbuild
-
-USER www-data
+FROM python:3.6
+LABEL maintainer="Marco Ceppi <marco@ceppi.net>"
 
 EXPOSE 10053
 
-CMD [ "python", "server.py" ]
+CMD ["python3", "server.py"]
