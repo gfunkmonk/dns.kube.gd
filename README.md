@@ -13,7 +13,7 @@ with intercepting DNS lookups for other purposes.
 To build the image:
 
 ```
-docker build -t wildcard-dns-server .
+docker build -t wildcard-dns .
 ```
 
 ## Running the image
@@ -22,7 +22,7 @@ Use Docker to run the image. When doing this you should map ports for both
 TCP and UDP ports of the DNS server.
 
 ```
-docker run -e --rm -p 53:10053/tcp -p 53:10053/udp wildcard-dns-server
+docker run -e --rm -p 53:10053/tcp -p 53:10053/udp wildcard-dns
 ```
 
 By default the IP wildcards will use the ``xip.io`` domain as the default.
@@ -82,10 +82,10 @@ automated build image from Docker Hub Registry, then you can pull it down
 from there.
 
 ```
-docker pull grahamdumpleton/wildcard-dns-server
+docker pull kubegd/wildcard-dns
 ```
 
-The image uses the official Docker ``python:2.7-onbuild`` image as the base
+The image uses the official Docker ``python:3.6`` image as the base
 image. As per best practice security measures, the image is set up not to
 run as root, using the default ``www-data`` user.
 
@@ -110,24 +110,22 @@ connection.
 ## Debugging DNS lookups
 
 To debug DNS lookups as they pass through the DNS server implemented by
-the image, you can set the ``DEBUG_LEVEL`` environment variable. The highest
-level of debug is ``3``.
+the image, you can set the ``DEBUG`` environment variable.
 
 ```
 docker run --rm -p 53:10053/tcp -p 53:10053/udp \
- -e DEBUG_LEVEL=3 -e WILDCARD_DOMAIN=wildcard.dev wildcard-dns-server
+ -e DEBUG=True -e WILDCARD_DOMAIN=wildcard.dev wildcard-dns
 ```
 
 At the highest level you can see wildcard DNS name matches, as well as pass
 through requests.
 
 ```
-nameservers [('8.8.8.8', 53), ('8.8.4.4', 53)]
-wildcard .*\.(?P<ipaddr>\d+\.\d+\.\d+\.\d+)\.wildcard\.dev
-address myapp.10.2.2.2.wildcard.dev
-lookup myapp.10.2.2.2.wildcard.dev
-wildcard myapp.10.2.2.2.wildcard.dev --> 10.2.2.2
-address www.google.com
-lookup www.google.com
-fallback www.google.com
+2018-04-11 05:31:23,179     gd.kube.dns:033  INFO: nameservers [('8.8.8.8', 53), ('8.8.4.4', 53)]
+2018-04-11 05:31:23,180     gd.kube.dns:044  INFO: wildcard .*\.(?P<ipaddr>\d+\.\d+\.\d+\.\d+)\.dns\.kube\.gd
+2018-04-11 05:31:23,180     gd.kube.dns:067  INFO: mapping (?P<RULE1>.*\.kube\.gd)
+2018-04-11 05:31:23,180     gd.kube.dns:068  INFO: results {'RULE1': '18.218.181.63'}
+2018-04-11 05:31:41,831     gd.kube.dns:103 DEBUG: address dns.kube.gd
+2018-04-11 05:31:41,831     gd.kube.dns:074 DEBUG: lookup dns.kube.gd
+2018-04-11 05:31:41,831     gd.kube.dns:096 DEBUG: mapping dns.kube.gd --> 18.218.181.63
 ```
