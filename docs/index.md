@@ -43,6 +43,12 @@ Testing resolution...
 You can now create ingress resources at *.00df6fa7.kube.gd
 ```
 
+From this point forward you can use the new address instead of a full IP space.
+
+ * app.**00df6fa7**.kube.gd => 10.0.0.12, 10.0.1.82, 10.0.0.96
+ * hello.**00df6fa7**.kube.gd => 10.0.0.12, 10.0.1.82, 10.0.0.96
+ * sub.domain.**00df6fa7**.kube.gd => 10.0.0.12, 10.0.1.82, 10.0.0.96
+
 # What is kube.gd?
 
 Kube Gud is a collection of scripts and services, provided for free, to help
