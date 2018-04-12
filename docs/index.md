@@ -12,11 +12,38 @@ no longer generate ACME / Lets Encrypt certificates with xip or nip.
 Any URL that ends with `dns.kube.gd` will map to the embedded IP address.
 For example:
 
- * app.**10**.**0**.**0**.**110**.dns.kube.gd => 10.0.0.110
- * hello.**172**.**168**.**12**.**2**.dns.kube.gd => 172.168.12.2
- * sub.domain.**192**.**168**.**250**.**6**.dns.kube.gd => 192.168.250.6
+ * app.**10**.**0**.**0**.**110**.kube.gd => 10.0.0.110
+ * hello.**172**.**168**.**12**.**2**.kube.gd => 172.168.12.2
+ * sub.domain.**192**.**168**.**250**.**6**.kube.gd => 192.168.250.6
 
-# kube.gd
+# Registering
+
+To avoid a single point of failure with addresses and to make things more
+fun, you can register a single sub-domain by running ``kubegd/dns-register:latest``.
+This will create a single subdomain, point to all works with an ingress-controller.
+
+```
+kubectl apply -f https://dns.kube.gd/register.yaml
+kubectl logs -f deploy/kube.gd
+```
+
+The log will report your address name:
+
+```
+Attempting to register address for 00df6fa7-62b6-43f9-b7aa-8c8214e6da73...
+00df6fa7-62b6-43f9-b7aa-8c8214e6da73 registered as 00df6fa7.kube.gd
+Adding 10.0.0.12 to 00df6fa7.kube.gd
+Adding 10.0.1.82 to 00df6fa7.kube.gd
+Adding 10.0.0.96 to 00df6fa7.kube.gd
+Testing resolution...
+00df6fa7.kube.gd has been configured!
+.
+.
+.
+You can now create ingress resources at *.00df6fa7.kube.gd
+```
+
+# What is kube.gd?
 
 Kube Gud is a collection of scripts and services, provided for free, to help
 progress Kubernetes usage (esp. when running your own cluster)
