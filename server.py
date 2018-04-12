@@ -115,31 +115,30 @@ class DynamicResolver(client.Resolver):
             else:
                 break
 
-        if result:
-            # Check if looks like IP address. If still not treat it like
-            # a CNAME and lookup name using normal DNS lookup.
-
-            if result[0] not in string.digits:
-                log.debug('cname {}'.format(result))
-                return client.Resolver.lookupAddress(self, result, timeout)
-
-            try:
-                payload = dns.Record_A(address=result)
-            except OSError as e:
-                log.warn(str(e))
-                return defer.succeed(([], [], []))
-
-            answer = dns.RRHeader(name=name, payload=payload)
-
-            answers = [answer]
-            authority = []
-            additional = []
-
-            return defer.succeed((answers, authority, additional))
-
-        else:
+        if not result:
             log.debug('fallback {}'.format(name))
-            return client.Resolver.lookupAddress(self, name, timeout)
+            return super().lookupAddress(name, timeout)
+
+        # Check if looks like IP address. If still not treat it like
+        # a CNAME and lookup name using normal DNS lookup.
+
+        if result[0] not in string.digits:
+            log.debug('cname {}'.format(result))
+            return super().lookupAddress(result, timeout)
+
+        try:
+            payload = dns.Record_A(address=result)
+        except OSError as e:
+            log.warn(str(e))
+            return defer.succeed(([], [], []))
+
+        answer = dns.RRHeader(name=name, payload=payload)
+
+        answers = [answer]
+        authority = []
+        additional = []
+
+        return defer.succeed((answers, authority, additional))
 
 
 def setup_logging(debug=False):
