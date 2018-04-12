@@ -4,6 +4,7 @@ import re
 import json
 import string
 import logging
+import ipaddress
 
 from twisted.internet import (
     reactor,
@@ -132,8 +133,10 @@ class DynamicResolver(client.Resolver):
         # locally. Do this as many times as need to. Note there is no
         # protection against loops here.
 
-        while result and result[0] not in string.digits:
+        while result and not is_ip(result):
+
             mapped = self._localLookup(result)
+
             if mapped is not None:
                 result = mapped
             else:
@@ -146,9 +149,19 @@ class DynamicResolver(client.Resolver):
         # Check if looks like IP address. If still not treat it like
         # a CNAME and lookup name using normal DNS lookup.
 
-        if result[0] not in string.digits:
+        if not is_ip(result):
             log.debug('cname {}'.format(result))
-            return super().lookupAddress(result, timeout)
+            return defer.succeed((
+                [
+                    dns.RRHeader(
+                        name=name,
+                        type=dns.CNAME,
+                        payload=dns.Record_CNAME(name=result, ttl=3600),
+                    )
+                ],
+                [],
+                [],
+            ))
 
         try:
             payload = dns.Record_A(address=result)
@@ -163,6 +176,15 @@ class DynamicResolver(client.Resolver):
         additional = []
 
         return defer.succeed((answers, authority, additional))
+
+
+def is_ip(query):
+    try:
+        ipaddress.ip_address(query)
+    except ValueError:
+        return False
+
+    return True
 
 
 def setup_logging(debug=False):
