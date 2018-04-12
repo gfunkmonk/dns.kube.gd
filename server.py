@@ -44,6 +44,7 @@ class DynamicResolver(client.Resolver):
         log.info('wildcard {}'.format(pattern))
 
         self._wildcard = re.compile(pattern)
+        self._wc_domain = wildcard_domain
 
         # Create regex pattern corresponding to conventional glob
         # style DNS wildcard mapping.
@@ -96,6 +97,29 @@ class DynamicResolver(client.Resolver):
             log.debug('mapping {} --> {}'.format(name, result))
 
             return result
+
+    def lookupNameservers(self, name, timeout=None):
+        name = name.decode().lower()
+
+        log.info('ns {}'.format(name))
+
+        if name != self._wc_domain:
+            log.debug('fallback ns {}'.format(name))
+            return super().lookupNameservers(name, timeout)
+
+        records = self._localLookup('_NS')
+
+        if not records:
+            log.debug('fallback ns {}'.format(name))
+            return super().lookupNameservers(name, timeout)
+
+        answer = []
+        for record in records:
+            payload = dns.Record_NS(name=record, ttl=3600)
+
+            answer.append(dns.RRHeader(name=name, type=dns.NS, payload=payload))
+
+        return defer.succeed((answer, [], []))
 
     def lookupAddress(self, name, timeout=None):
         name = name.decode().lower()
