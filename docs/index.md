@@ -1,11 +1,11 @@
 
-Docker image for a DNS server implementing ``xip.io`` / ``nip.io`` style
-DNS wildcards, more conventional glob style DNS wildcard mappings, as well
-as pass through for all other lookups.
+DNS service for implementing ``xip.io`` / ``nip.io`` style DNS wildcards,
+more conventional glob style DNS wildcard mappings, as well as pass through
+for all other lookups.
 
 ``xip.io`` and ``nip.io`` work great, the functionality here is the same
-and is ultimately because ingress requries hostname matches and you can
-no longer generate ACME / Lets Encrypt certificates with xip or nip.
+and is ultimately better as Kubernetes ingress requries hostname matches
+and you can no longer generate ACME / Lets Encrypt certificates with xip or nip.
 
 # Getting Started
 
