@@ -64,3 +64,10 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+_site
+
+Gemfile
+Gemfile.lock
+docs/vendor
+.bundle

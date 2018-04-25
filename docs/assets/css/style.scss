@@ -1,0 +1,35 @@
+---
+---
+
+@import "{{ site.theme }}";
+@import url('https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono');
+
+.wrapper {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 16px;
+}
+
+ul.code > li {
+  white-space: pre;
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 18px;
+  list-style-type: none;
+}
+
+code, pre {
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 18px;
+}
+
+header > p,
+header > h1 {
+  text-align: center;
+}
+
+.wrapper {
+  width: 1060px;
+}
+
+.wrapper > section {
+  width: 700px;
+}
