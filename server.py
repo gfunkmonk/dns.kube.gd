@@ -31,7 +31,7 @@ class DynamicResolver(client.Resolver):
 
         client.Resolver.__init__(self, servers=servers)
 
-        log.info('nameservers %s' % servers)
+        log.info('nameservers %s', servers)
 
         # Create regex pattern corresponding to xip.io style DNS
         # wilcard domain.
